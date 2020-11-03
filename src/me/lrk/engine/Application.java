@@ -1,8 +1,10 @@
 package me.lrk.engine;
 
 import java.awt.event.KeyEvent;
+import me.lrk.game.Game;
 
 public class Application {
+  private Game game;
   private Window window;
   private Renderer renderer;
   private InputHandler input;
@@ -11,8 +13,8 @@ public class Application {
 
   private final double UPDATE_CAP = 1.0/60.0;
 
-  public Application() {
-
+  public Application(Game game) {
+    this.game = game;
   }
 
   public void start() {
@@ -25,7 +27,7 @@ public class Application {
   }
 
   public void stop() {
-
+    this.running = false;
   }
 
   private void run() {
@@ -63,7 +65,8 @@ public class Application {
         // only render if we update
         render = true;
 
-        // TODO update game
+        // update the game
+        game.update(this);
         if(input.isKeyDown(KeyEvent.VK_W)) {
           System.out.println("vk down!");
         }
@@ -81,12 +84,13 @@ public class Application {
       }
 
       if (render) {
+        game.render(this);
         renderer.clear();
         window.render();
         curFrames += 1;
       } else {
         try {
-          // sleep for 1 milis reduces cpu usage
+          // sleep for 1 millis reduces cpu usage
           Thread.sleep(1);
         } catch (InterruptedException e) {
           e.printStackTrace();
